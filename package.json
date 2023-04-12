@@ -61,5 +61,6 @@
   "browser": {
     "crypto": false,
     "stream": false
-  }
+  },
+  "type": "module"
 }
