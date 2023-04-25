@@ -1,3 +1,4 @@
+@genType
 type t = {
   userId: string,
   secret: string,

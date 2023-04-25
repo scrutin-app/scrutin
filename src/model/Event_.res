@@ -2,6 +2,7 @@
 // Every state mutation is done through events
 
 // ---
+@genType
 type event_type_t = [
   | #"election"
   | #"election.update"
@@ -9,6 +10,7 @@ type event_type_t = [
 ]
 
 // #### Event.t
+@genType
 type t = {
   // **type**
   type_: event_type_t,

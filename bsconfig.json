@@ -29,5 +29,11 @@
     "-open JsonCombinators",
     "-open ReactNative",
     "-open Paper"
-  ]
+  ],
+  "gentypeconfig": {
+    "language": "typescript",
+    "shims": {},
+    "generatedFileExtension": ".gen.ts",
+    "module": "es6"
+  }
 }

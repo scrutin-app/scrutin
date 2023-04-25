@@ -1,3 +1,4 @@
+@genType
 type t = {
   // First version of the election (None for new elections)
   originId: option<string>,
