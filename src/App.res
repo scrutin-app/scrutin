@@ -50,6 +50,12 @@ let make = () => {
       | Some(election) => <ElectionInviteEmail election electionId />
       }
 
+    | list{"elections", electionId, "invite_phone"} =>
+      switch Map.String.get(state.elections, electionId) {
+      | None => <NotFoundYet />
+      | Some(election) => <ElectionInvitePhone election electionId />
+      }
+
     | list{"elections", electionId, "invite_manage"} =>
       switch Map.String.get(state.elections, electionId) {
       | None => <NotFoundYet />
