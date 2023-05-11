@@ -233,7 +233,7 @@
   packages/belenios/src/lib/shell
   (include_subdirs unqualified)
   (library
-    (name belenios_lib)
+    (name belenios)
     (libraries bs_json belenios_platform belenios_platform_melange belenios_core belenios_v1 atdgen_codec_runtime belenios_compat_melange)
     (wrapped true)
     (modes melange)
@@ -265,6 +265,18 @@
       (action (with-stdout-to %{target} (run ./gen.sh %{version} %{spec_version}))))
     )
   )
+
+(subdir
+  packages/belenios/src/common/tool
+  (include_subdirs unqualified)
+  (library
+    (name belenios_tool_common)
+    (libraries belenios belenios_core belenios_platform belenios_platform_melange atdgen_codec_runtime)
+    (wrapped true)
+    (modes melange)
+    (flags -w -9-27-32-20))
+  )
+
 
 (subdir
   packages/mel-react-native/src

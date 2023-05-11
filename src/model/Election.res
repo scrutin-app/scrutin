@@ -21,9 +21,9 @@ type t = {
 external parse: string => t = "JSON.parse"
 external stringify: t => string = "JSON.stringify"
 
-let answers = election => Belenios.Election.answers(Belenios.Election.parse(election.params))
+let answers = election => BeleniosWrapper.Election.answers(BeleniosWrapper.Election.parse(election.params))
 let choices = answers
 
-let name = election => Belenios.Election.parse(election.params).name
+let name = election => BeleniosWrapper.Election.parse(election.params).name
 
-let description = election => Belenios.Election.parse(election.params).description
+let description = election => BeleniosWrapper.Election.parse(election.params).description

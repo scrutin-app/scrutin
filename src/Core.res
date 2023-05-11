@@ -31,7 +31,7 @@ module Election = {
       dispatch(StateMsg.Trustee_Add(trustee))
 
       // Create an election
-      let params = Belenios.Election._create(~name, ~description=desc,
+      let params = BeleniosWrapper.Election._create(~name, ~description=desc,
         ~choices, ~trustees)
 
       let election : Election.t = {
@@ -39,7 +39,7 @@ module Election = {
         adminIds: [admin.userId],
         voterIds: [],
         params,
-        trustees: Belenios.Trustees.to_str(trustees),
+        trustees: BeleniosWrapper.Trustees.to_str(trustees),
         pda: None, pdb: None, result: None
       }
 
@@ -68,12 +68,12 @@ module Election = {
       let election = Map.String.getExn(state.elections, electionId)
 
       // Casting values (to remove)
-      let params = Belenios.Election.parse(election.params)
-      let trustees = Belenios.Trustees.of_str(election.trustees)
+      let params = BeleniosWrapper.Election.parse(election.params)
+      let trustees = BeleniosWrapper.Trustees.of_str(election.trustees)
 
       // Fetching the election private key from local storage
       let trustee = Array.getBy(state.trustees, trustee => {
-        Belenios.Trustees.pubkey(trustees) == Belenios.Trustees.pubkey(trustee.trustees)
+        BeleniosWrapper.Trustees.pubkey(trustees) == BeleniosWrapper.Trustees.pubkey(trustee.trustees)
       })
       let privkey = Option.getExn(trustee).privkey
 
@@ -84,22 +84,22 @@ module Election = {
       let ciphertexts =
         ballots
         ->Array.map(ballot => ballot.ciphertext)
-        ->Array.map(Belenios.Ballot.of_str)
+        ->Array.map(BeleniosWrapper.Ballot.of_str)
 
       let pubcreds =
         ballots
         ->Array.map(ballot => ballot.pubcred)
 
-      let (a, b) = Belenios.Election.decrypt(params, ciphertexts, trustees, pubcreds, privkey)
-      let result = Belenios.Election.result(params, ciphertexts, trustees, pubcreds, a, b)
+      let (a, b) = BeleniosWrapper.Election.decrypt(params, ciphertexts, trustees, pubcreds, privkey)
+      let result = BeleniosWrapper.Election.result(params, ciphertexts, trustees, pubcreds, a, b)
 
       // Lookup for the admin identity
       let admin = state->State.getElectionAdminExn(election)
 
       let ev = Event_.ElectionTally.create({
         electionId,
-        pda: Belenios.PartialDecryption.to_s1(a),
-        pdb: Belenios.PartialDecryption.to_s2(b),
+        pda: BeleniosWrapper.PartialDecryption.to_s1(a),
+        pdb: BeleniosWrapper.PartialDecryption.to_s2(b),
         result
       }, admin)
 

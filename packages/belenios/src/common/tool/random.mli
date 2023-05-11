@@ -1,0 +1,2 @@
+include Belenios_core.Signatures.RANDOM
+

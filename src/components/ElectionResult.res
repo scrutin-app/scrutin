@@ -10,7 +10,7 @@ let make = (~election: Election.t, ~electionId) => {
     ->Array.length
 
   let data = switch election.result {
-  | Some(result) => Belenios.Election.scores(result)
+  | Some(result) => BeleniosWrapper.Election.scores(result)
   | None => []
   }
 

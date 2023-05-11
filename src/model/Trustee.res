@@ -1,10 +1,10 @@
 type t = {
-  trustees: Belenios.Trustees.t,
-  privkey: Belenios.Trustees.Privkey.t,
+  trustees: BeleniosWrapper.Trustees.t,
+  privkey: BeleniosWrapper.Trustees.Privkey.t,
 }
 
 let make = () => {
-  let (privkey, trustees) = Belenios.Trustees.create()
+  let (privkey, trustees) = BeleniosWrapper.Trustees.create()
   {trustees, privkey}
 }
 

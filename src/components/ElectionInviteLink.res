@@ -29,7 +29,8 @@ let make = (~election: Election.t, ~electionId) => {
     <CopyButton text=inviteUrl />
     <S.Button
       onPress={_ => {
-        Share.share({message: inviteUrl})->ignore
+        //Share.share({message: inviteUrl})->ignore
+        ()
       }}
       title={t(. "election.show.createInvite.share")}
     />

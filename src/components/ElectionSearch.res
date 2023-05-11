@@ -3,7 +3,7 @@ module Item = {
   let make = (~id, ~election: Election.t) => {
     let (_state, dispatch) = StateContext.use()
 
-    let electionParams = Belenios.Election.parse(election.params)
+    let electionParams = BeleniosWrapper.Election.parse(election.params)
     let name = electionParams.name == "" ? "Unnamed" : electionParams.name
 
     <Card style={S.marginY(8.0)}>

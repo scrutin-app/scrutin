@@ -5,8 +5,8 @@ let make = () => {
 
   <Paper.List.Section title={t(. "trustees.title")}>
     {Array.map(state.trustees, trustee => {
-      let privkey = Belenios.Trustees.Privkey.to_str(trustee.privkey)
-      let pubkey = Belenios.Trustees.pubkey(trustee.trustees)
+      let privkey = BeleniosWrapper.Trustees.Privkey.to_str(trustee.privkey)
+      let pubkey = BeleniosWrapper.Trustees.pubkey(trustee.trustees)
       <Paper.List.Item title=pubkey description=privkey key=pubkey />
     })->React.array}
     <Paper.Button mode=#outlined onPress={_ => Trustee.clear()}>

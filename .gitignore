@@ -22,6 +22,9 @@ lib/bs/*
 .merlin
 *.bs.js
 
+# melange build artefacts
+_build
+
 # cypress artefacts
 cypress/screenshots/
 cypress/videos/
