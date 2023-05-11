@@ -33,6 +33,7 @@ let get_version x =
      (match List.assoc_opt "version" o with
       | None -> 0
       | Some (`Int x) -> x
+      | Some (`Float x) -> Float.to_int x
       | _ -> failwith "Election.of_string: invalid version"
      )
   | _ -> failwith "Election.of_string: invalid data"
