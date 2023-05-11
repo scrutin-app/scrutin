@@ -1,7 +1,7 @@
 (include_subdirs unqualified)
 (melange.emit
   (target output)
-  (libraries melange rescript_promise ReactNative reason_react rescript_webapi rescript_react_native_async_storage paper rescript_json_combinators rescript_use_tea rescript_react_native_svg belenios belenios_core atdgen_codec_runtime belenios_tool_common)
+  (libraries melange rescript_promise ReactNative reason_react rescript_webapi rescript_react_native_async_storage paper rescript_json_combinators rescript_use_tea rescript_react_native_svg belenios belenios_core atdgen_codec_runtime belenios_tool_common belenios_platform belenios_platform_melange)
   (modules :standard)
   (runtime_deps
     (glob_files ./helpers/*.js)

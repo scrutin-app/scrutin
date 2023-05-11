@@ -271,7 +271,7 @@
   (include_subdirs unqualified)
   (library
     (name belenios_tool_common)
-    (libraries belenios belenios_core belenios_platform belenios_platform_melange atdgen_codec_runtime)
+    (libraries belenios belenios_core belenios_platform belenios_platform_melange atdgen_codec_runtime bs_json)
     (wrapped true)
     (modes melange)
     (flags -w -9-27-32-20))
