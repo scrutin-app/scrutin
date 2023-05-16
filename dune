@@ -277,6 +277,16 @@
     (flags -w -9-27-32-20))
   )
 
+(subdir
+  packages/belenios/src/web/clients/jslib
+  (include_subdirs unqualified)
+  (library
+    (name belenios_jslib)
+    (libraries belenios belenios_core belenios_platform belenios_platform_melange atdgen_codec_runtime bs_json belenios_tool_common)
+    (wrapped true)
+    (modes melange)
+    (flags -w -9-27-32-20))
+  )
 
 (subdir
   packages/mel-react-native/src

@@ -18,7 +18,7 @@
 (*  License along with this program.  If not, see                         *)
 (*  <http://www.gnu.org/licenses/>.                                       *)
 (**************************************************************************)
-
+(*
 open Lwt.Syntax
 open Js_of_ocaml
 open Js_of_ocaml_lwt
@@ -125,3 +125,4 @@ let belenios =
   end
 
 let () = Js.export "belenios" belenios
+*)
