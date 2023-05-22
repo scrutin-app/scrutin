@@ -1,9 +1,8 @@
 module Credentials = {
-  @module("./belenios") @val
-  external create: (string, int) => (array<string>, array<string>) = "makeCredentials"
-
-  @module("./belenios") @val
-  external derive: (~uuid: string, ~privateCredential: string) => string = "derive"
+  let create = BeleniosInterface.makeCredentials
+  // TODO: rename privateCredential to publicCredential, like in Belenios jblib
+  let derive  = (~uuid: string, ~privateCredential: string) =>
+    BeleniosInterface.derive(uuid, privateCredential)
 
   type t = array<string>
   external parse: string => t = "JSON.parse"
@@ -12,16 +11,15 @@ module Credentials = {
 
 module Trustees = {
   module Privkey = {
-    type t
+    type t = string
 
     external of_str: string => t = "%identity"
     external to_str: t => string = "%identity"
   }
 
-  type t
+  type t = string
 
-  @module("./belenios") @val
-  external create: unit => (Privkey.t, t) = "genTrustee"
+  let create: unit => (Privkey.t, t) = BeleniosInterface.genTrustee
 
   let pubkey: t => string = %raw(`
     function(e) {
@@ -36,7 +34,7 @@ module Trustees = {
 }
 
 module Ballot = {
-  type t
+  type t = string
 
   external of_str: string => t = "%identity"
   external to_str: t => string = "%identity"
@@ -55,8 +53,8 @@ module Ballot = {
 }
 
 module PartialDecryption = {
-  type t1
-  type t2
+  type t1 = string
+  type t2 = string
 
   external to_s1: t1 => string = "%identity"
   external to_s2: t2 => string = "%identity"
@@ -86,40 +84,39 @@ module Election = {
   external parse: string => t = "JSON.parse"
   external stringify: t => string = "JSON.stringify"
 
-  @module("./belenios") @val
-  external _create: (
+  let _create = (
     ~name: string,
     ~description: string,
     ~choices: array<string>,
     ~trustees: Trustees.t,
-  ) => string = "makeElection"
+  ) =>
+    BeleniosInterface.makeElection(name, description, choices, trustees)
 
-  @module("./belenios") @val
-  external _vote: (
-    string,
+  let _vote = (
+    election: string,
     ~cred: string,
     ~selections: array<array<int>>,
     ~trustees: Trustees.t,
-  ) => Ballot.t = "encryptBallot"
+  ) =>
+    BeleniosInterface.encryptBallot(election, cred, selections, trustees)
 
-  @module("./belenios") @val
-  external _decrypt: (
-    string,
-    array<Ballot.t>,
-    Trustees.t,
-    array<string>,
-    Trustees.Privkey.t,
-  ) => (PartialDecryption.t1, PartialDecryption.t2) = "decrypt"
+  let _decrypt = (
+    election:string,
+    ballots:array<Ballot.t>,
+    trustees: Trustees.t,
+    credentials: array<string>,
+    privkey: Trustees.Privkey.t
+  ) =>
+    BeleniosInterface.decrypt(election, ballots, trustees, credentials, privkey)
 
-  @module("./belenios") @val
-  external _result: (
-    string,
-    array<Ballot.t>,
-    Trustees.t,
-    array<string>,
-    PartialDecryption.t1,
-    PartialDecryption.t2,
-  ) => string = "result"
+  let _result = (
+    election:string,
+    ballots:array<Ballot.t>,
+    trustees: Trustees.t,
+    credentials: array<string>,
+    a: PartialDecryption.t1,
+    b: PartialDecryption.t2,
+  ) => BeleniosInterface.result(election, ballots, trustees, credentials, a, b)
 
   let create = (~name, ~description, ~choices, ~trustees) =>
     parse(_create(~name, ~description, ~choices, ~trustees))
