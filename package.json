@@ -29,7 +29,7 @@
     "@rescript-react-native/svg": "^12.1.9",
     "@rescript/react": "^0.10.3",
     "@ryyppy/rescript-promise": "^2.1.0",
-    "expo": "~48.0.11",
+    "expo": "~49.0.0",
     "expo-crypto": "~12.2.1",
     "expo-splash-screen": "^0.18.1",
     "expo-status-bar": "~1.4.4",
