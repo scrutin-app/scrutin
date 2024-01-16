@@ -54,6 +54,51 @@ module Election = {
     }
   }
 
+  let createMJ = (
+    ~name: string,
+    ~desc: string,
+    ~candidates: array<string>,
+  ) => {
+    // ---
+
+    (state: State.t, dispatch) => {
+      let admin = switch state.accounts[0] {
+      | Some(account) => account
+      | None =>
+        let account = Account.make()
+        dispatch(StateMsg.Account_Add(account))
+        account
+      }
+
+      let trustee = Trustee.make()
+      let trustees = trustee.trustees
+
+      // Store the trustee private key
+      dispatch(StateMsg.Trustee_Add(trustee))
+
+      let params = Belenios.Election._createMJ(~name, ~description=desc,
+        ~candidates, ~trustees)
+
+      let election : Election.t = {
+        electionId: None,
+        adminIds: [admin.userId],
+        voterIds: [],
+        params,
+        trustees: Belenios.Trustees.to_str(trustees),
+        pda: None, pdb: None, result: None
+      }
+
+      // wrap it in an event
+      let event = Event_.ElectionInit.create(election, admin)
+
+      // Add the new event<br />
+      dispatch(StateMsg.Event_Add_With_Broadcast(event))
+
+      // Go the election page
+      dispatch(StateMsg.Navigate(list{"elections", event.cid}))
+    }
+  }
+
   // ---
   // #### Election.tally
   // Compute the result of an election, with help of the trustees keys
@@ -127,15 +172,47 @@ module Ballot = {
     (state: State.t, dispatch) => {
       let election = Map.String.getExn(state.elections, electionId)
       // Transform the choice index to an array of 0 and 1 for every options
-      let selection =
+      let selections = [
         Array.make(nbChoices, 0)
         ->Array.mapWithIndex((i, _value) => {choice == Some(i) ? 1 : 0})
+      ]
 
       let ballot = Ballot.make(
         ~election,
         ~electionId,
         ~voterId=voter.userId,
-        ~selection
+        ~selections
+      )
+
+      let ev = Event_.ElectionBallot.create(ballot, voter)
+      dispatch(StateMsg.Event_Add_With_Broadcast(ev))
+    }
+  }
+
+  let voteMJ = (
+    // **electionId** (election.originId || electionEvent.cid)
+    ~electionId: string,
+    ~voter: Account.t,
+    // **choices**: The choice for every candidate<br />
+    // Options are indexed starting at 0 to (nbChoices - 1)
+    ~choices: array<int>,
+  ) => {
+    // ---
+    (state: State.t, dispatch) => {
+      let election = Map.String.getExn(state.elections, electionId)
+
+      // Transform the choice index to an array of 0 and 1 for every options
+      let selections = Array.map(choices, (choice) => {
+        Array.make(6, 0)
+        ->Array.mapWithIndex((i, _value) => {choice == i ? 1 : 0})
+      })
+
+
+      let ballot = Ballot.make(
+        ~election,
+        ~electionId,
+        ~voterId=voter.userId,
+        ~selections
       )
 
       let ev = Event_.ElectionBallot.create(ballot, voter)

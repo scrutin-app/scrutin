@@ -24,6 +24,8 @@ external stringify: t => string = "JSON.stringify"
 let answers = election => Belenios.Election.answers(Belenios.Election.parse(election.params))
 let choices = answers
 
+let questions = election => Belenios.Election.questions(Belenios.Election.parse(election.params))
+
 let name = election => Belenios.Election.parse(election.params).name
 
 let description = election => Belenios.Election.parse(election.params).description

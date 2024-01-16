@@ -95,6 +95,14 @@ module Election = {
   ) => string = "makeElection"
 
   @module("./belenios") @val
+  external _createMJ: (
+    ~name: string,
+    ~description: string,
+    ~candidates: array<string>,
+    ~trustees: Trustees.t,
+  ) => string = "makeElectionMajorityJudgment"
+
+  @module("./belenios") @val
   external _vote: (
     string,
     ~cred: string,
@@ -123,13 +131,19 @@ module Election = {
 
   let create = (~name, ~description, ~choices, ~trustees) =>
     parse(_create(~name, ~description, ~choices, ~trustees))
+
+  let createMJ = (~name, ~description, ~candidates, ~trustees) =>
+    parse(_createMJ(~name, ~description, ~candidates, ~trustees))
+
   let vote = o => _vote(stringify(o))
   let decrypt = o => _decrypt(stringify(o))
 
   external parseResults: string => results_t = "JSON.parse"
   let result = o => _result(stringify(o))
 
-  let scores: string => array<int> = s => Option.getExn(parseResults(s).result[0])
+  let scores: string => array<array<int>> = s => parseResults(s).result
 
   let answers = params => Array.getExn(params.questions, 0).answers
+
+  let questions = params => Array.map(params.questions, (q) => q.question)
 }
