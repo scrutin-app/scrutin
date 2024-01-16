@@ -95,6 +95,14 @@ module Election = {
   ) => string = "makeElection"
 
   @module("./belenios") @val
+  external _createMJ: (
+    ~name: string,
+    ~description: string,
+    ~candidates: array<string>,
+    ~trustees: Trustees.t,
+  ) => string = "makeElectionMajorityJudgment"
+
+  @module("./belenios") @val
   external _vote: (
     string,
     ~cred: string,

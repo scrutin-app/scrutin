@@ -15,7 +15,7 @@ module Choice = {
 module BoothAfterVote = {
   @react.component
   let make = (~electionId) => {
-    let (state, dispatch) = StateContext.use()
+    let (_state, dispatch) = StateContext.use()
     <>
       <Text style={S.flatten([S.title, Style.viewStyle(~margin=30.0->Style.dp, ())])}>
         {"Merci pour votre vote"->React.string}
@@ -28,7 +28,7 @@ module BoothAfterVote = {
   }
 }
 
-module Booth = {
+module BoothClassic = {
   @react.component
   let make = (~election, ~electionId, ~account) => {
     let (state, dispatch) = StateContext.use()
@@ -54,6 +54,60 @@ module Booth = {
         onPress={_ => {
           let nbChoices = Array.length(Election.choices(election))
           Core.Ballot.vote(~electionId, ~voter=account, ~choice, ~nbChoices)(state, dispatch)
+        }}
+      />
+    </>
+  }
+}
+
+module BoothMajorityJudgement = {
+  @react.component
+  let make = (~election, ~electionId, ~account) => {
+    let candidates = Election.choices(election)
+    let nCandidates = Array.length(candidates)
+    let (state, dispatch) = StateContext.use()
+    let {t} = ReactI18next.useTranslation()
+    let (choices, setChoices) = React.useState(_ => Array.make(nCandidates, None))
+    let question = switch Election.description(election) {
+    | "" => t(. "election.new.question")
+    | question => question
+    }
+
+
+    let submitStyle = if Array.every(choices, Option.isSome) {
+      Style.viewStyle(())
+    } else {
+      Style.viewStyle(~backgroundColor=Color.gray, ())
+    }
+
+    <>
+      <S.Section title=question />
+      {Array.mapWithIndex(candidates, (i, candidateName) => {
+        <View style=S.questionBox>
+          <S.Section title=candidateName />
+          {Array.mapWithIndex([ "Excellent", "Very good", "Good",
+            "Passable", "Inadequate", "Mediocre" ], (r, choiceName) => {
+            let selected = Array.getExn(choices, i) == Some(r)
+
+            <Choice
+              name=choiceName selected key={Int.toString(i)}
+              onSelect={_ => setChoices(_ => choices->Array.mapWithIndex(
+                (idx, e) => if idx == i { Some(r) } else { e }))}
+            />
+          })->React.array}
+        </View>
+      })->React.array}
+
+      <S.Button
+        title="Voter"
+        style=submitStyle
+        onPress={_ => {
+          if Array.every(choices, Option.isSome) {
+            let choices = choices->Array.map((o) => o->Option.getWithDefault(0))
+            Core.Ballot.voteMJ(~electionId, ~voter=account, ~choices)(state, dispatch)
+          } else {
+            Js.log("You need to make a choice for every candidate")
+          }
         }}
       />
     </>
@@ -86,7 +140,7 @@ let make = (~election: Election.t, ~electionId) => {
       </Text>
     | Some(account) =>
       switch oBallot {
-      | None => <Booth election electionId account />
+      | None => <BoothMajorityJudgement election electionId account />
       | Some(_ballot) => <BoothAfterVote electionId />
       }
     } }
