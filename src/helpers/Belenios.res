@@ -141,7 +141,7 @@ module Election = {
   external parseResults: string => results_t = "JSON.parse"
   let result = o => _result(stringify(o))
 
-  let scores: string => array<int> = s => Option.getExn(parseResults(s).result[0])
+  let scores: string => array<array<int>> = s => parseResults(s).result
 
   let answers = params => Array.getExn(params.questions, 0).answers
 

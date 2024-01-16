@@ -20,7 +20,6 @@ let make = (~election: Election.t, ~electionId) => {
     )
 
   let choices = Election.choices(election)
-  let maxValue = Array.reduce(data, 0, (v1, v2) => v1 > v2 ? v1 : v2)
 
   <>
     <ElectionHeader election section=#result />
@@ -30,34 +29,38 @@ let make = (~election: Election.t, ~electionId) => {
       | question => <S.Section title=question />
       }}
       <S.Section title={`${nbVotes->Int.toString} votants`} />
-      <S.Row>
-        {Array.mapWithIndex(data, (i, value) => {
-          let color = Option.getWithDefault(colors[i], Color.rgb(~r=128, ~g=128, ~b=128))
-          let ratio = Int.toFloat(value) /. Int.toFloat(maxValue)
-          let ratio = Js.Float.isNaN(ratio) ? 0.0 : ratio
-          let ratio = Js.Math.max_float(ratio, 0.05)
-          let choiceName = choices[i]->Option.getExn
-          <S.Col key={i->Int.toString}>
-            <ReactNativeSvg.Svg
-              style={Style.viewStyle(
-                ~width=20.0->Style.dp,
-                ~height=(100.0 *. ratio)->Style.dp,
-                ~alignSelf=#center,
-                ~marginTop=50.0->Style.dp,
-                ~marginBottom=10.0->Style.dp,
-                ~paddingTop=(100.0 *. (1. -. ratio))->Style.dp,
-                (),
-              )}>
-              <ReactNativeSvg.Rect
-                fill=color width={20.0->Style.dp} height={(100.0 *. ratio)->Style.dp}
-              />
-            </ReactNativeSvg.Svg>
-            <Text style={Style.textStyle(~color, ~alignSelf=#center, ())}>
-              {`${choiceName} (${value->Int.toString})`->React.string}
-            </Text>
-          </S.Col>
+        {Array.mapWithIndex(Election.questions(election), (n, candidate) => {
+          let maxValue = Array.reduce(Array.getExn(data, n), 0, (v1, v2) => v1 > v2 ? v1 : v2)
+          <S.Row>
+            <S.Section title={candidate} />
+            {Array.mapWithIndex(Array.getExn(data, n), (i, value) => {
+              let color = Option.getWithDefault(colors[i], Color.rgb(~r=128, ~g=128, ~b=128))
+              let ratio = Int.toFloat(value) /. Int.toFloat(maxValue)
+              let ratio = Js.Float.isNaN(ratio) ? 0.0 : ratio
+              let ratio = Js.Math.max_float(ratio, 0.05)
+              let choiceName = choices[i]->Option.getExn
+              <S.Col key={i->Int.toString}>
+                <ReactNativeSvg.Svg
+                  style={Style.viewStyle(
+                    ~width=20.0->Style.dp,
+                    ~height=(100.0 *. ratio)->Style.dp,
+                    ~alignSelf=#center,
+                    ~marginTop=50.0->Style.dp,
+                    ~marginBottom=10.0->Style.dp,
+                    ~paddingTop=(100.0 *. (1. -. ratio))->Style.dp,
+                    (),
+                  )}>
+                  <ReactNativeSvg.Rect
+                    fill=color width={20.0->Style.dp} height={(100.0 *. ratio)->Style.dp}
+                  />
+                </ReactNativeSvg.Svg>
+                <Text style={Style.textStyle(~color, ~alignSelf=#center, ())}>
+                  {`${choiceName} (${value->Int.toString})`->React.string}
+                </Text>
+              </S.Col>
+            })->React.array}
+          </S.Row>
         })->React.array}
-      </S.Row>
     </View>
     <View style={Style.viewStyle(~margin=30.0->Style.dp, ())}>
       <S.TextInput onChangeText={_ => ()} value=electionUrl />
