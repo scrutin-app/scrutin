@@ -172,15 +172,16 @@ module Ballot = {
     (state: State.t, dispatch) => {
       let election = Map.String.getExn(state.elections, electionId)
       // Transform the choice index to an array of 0 and 1 for every options
-      let selection =
+      let selections = [
         Array.make(nbChoices, 0)
         ->Array.mapWithIndex((i, _value) => {choice == Some(i) ? 1 : 0})
+      ]
 
       let ballot = Ballot.make(
         ~election,
         ~electionId,
         ~voterId=voter.userId,
-        ~selection
+        ~selections
       )
 
       let ev = Event_.ElectionBallot.create(ballot, voter)
@@ -200,11 +201,18 @@ module Ballot = {
     (state: State.t, dispatch) => {
       let election = Map.String.getExn(state.elections, electionId)
 
+      // Transform the choice index to an array of 0 and 1 for every options
+      let selections = Array.map(choices, (choice) => {
+        Array.make(6, 0)
+        ->Array.mapWithIndex((i, _value) => {choice == i ? 1 : 0})
+      })
+
+
       let ballot = Ballot.make(
         ~election,
         ~electionId,
         ~voterId=voter.userId,
-        ~selection=choices
+        ~selections
       )
 
       let ev = Event_.ElectionBallot.create(ballot, voter)
