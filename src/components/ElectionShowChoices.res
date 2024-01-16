@@ -9,7 +9,7 @@ let make = (~election) => {
 
   <View style=S.questionBox>
     <S.Section title=question />
-    {Array.mapWithIndex(Election.choices(election), (i, name) => {
+    {Array.mapWithIndex(Election.questions(election), (i, name) => {
       <List.Item title=name key={Int.toString(i)} />
     })->React.array}
   </View>

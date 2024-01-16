@@ -131,6 +131,10 @@ module Election = {
 
   let create = (~name, ~description, ~choices, ~trustees) =>
     parse(_create(~name, ~description, ~choices, ~trustees))
+
+  let createMJ = (~name, ~description, ~candidates, ~trustees) =>
+    parse(_createMJ(~name, ~description, ~candidates, ~trustees))
+
   let vote = o => _vote(stringify(o))
   let decrypt = o => _decrypt(stringify(o))
 
@@ -140,4 +144,6 @@ module Election = {
   let scores: string => array<int> = s => Option.getExn(parseResults(s).result[0])
 
   let answers = params => Array.getExn(params.questions, 0).answers
+
+  let questions = params => Array.map(params.questions, (q) => q.question)
 }

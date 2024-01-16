@@ -63,7 +63,7 @@ module BoothClassic = {
 module BoothMajorityJudgement = {
   @react.component
   let make = (~election, ~electionId, ~account) => {
-    let candidates = Election.choices(election)
+    let candidates = Election.questions(election)
     let nCandidates = Array.length(candidates)
     let (state, dispatch) = StateContext.use()
     let {t} = ReactI18next.useTranslation()

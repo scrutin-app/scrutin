@@ -9,6 +9,7 @@ Belenios.belenios.sjcl.random.addEntropy(ab,
 export let {
   genTrustee,
   makeElection,
+  makeElectionMajorityJudgment,
   encryptBallot,
   makeCredentials,
   derive,
